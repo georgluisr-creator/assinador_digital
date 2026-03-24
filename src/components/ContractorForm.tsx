@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  DEFAULT_SERVICE_DESCRIPTION,
+  type PayerPresetId,
+  PAYER_PRESETS,
+  getPayerPreset,
+} from "@/lib/payer-presets";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
@@ -11,14 +17,18 @@ function todayISODate() {
   return `${y}-${m}-${day}`;
 }
 
+const INITIAL_PRESET: PayerPresetId = "luiz";
+const firstPreset = getPayerPreset(INITIAL_PRESET)!;
+
 export function ContractorForm() {
   const router = useRouter();
-  const [payerName, setPayerName] = useState("");
-  const [payerCpf, setPayerCpf] = useState("");
+  const [payerPreset, setPayerPreset] = useState<PayerPresetId>(INITIAL_PRESET);
+  const [payerName, setPayerName] = useState(firstPreset.name);
+  const [payerCpf, setPayerCpf] = useState(firstPreset.cpf);
   const [providerName, setProviderName] = useState("");
   const [providerCpf, setProviderCpf] = useState("");
   const [providerPhone, setProviderPhone] = useState("");
-  const [serviceDesc, setServiceDesc] = useState("");
+  const [serviceDesc, setServiceDesc] = useState(DEFAULT_SERVICE_DESCRIPTION);
   const [amount, setAmount] = useState("");
   const [serviceDate, setServiceDate] = useState(todayISODate);
   const [loading, setLoading] = useState(false);
@@ -40,6 +50,29 @@ export function ContractorForm() {
     const msg = `Olá! Por favor assine o recibo de serviço neste link:\n${signUrl}`;
     return `https://wa.me/?text=${encodeURIComponent(msg)}`;
   }, [signUrl]);
+
+  function applyPayerPreset(id: PayerPresetId) {
+    setPayerPreset(id);
+    const preset = getPayerPreset(id);
+    if (preset) {
+      setPayerName(preset.name);
+      setPayerCpf(preset.cpf);
+    } else {
+      setPayerName("");
+      setPayerCpf("");
+    }
+  }
+
+  function markCustomIfEdited(nextName: string, nextCpf: string) {
+    const match = PAYER_PRESETS.find(
+      (p) => p.name === nextName && p.cpf === nextCpf,
+    );
+    if (match) {
+      setPayerPreset(match.id);
+    } else {
+      setPayerPreset("custom");
+    }
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -68,12 +101,13 @@ export function ContractorForm() {
       }
       if (data.id) {
         setCreatedId(data.id);
-        setPayerName("");
-        setPayerCpf("");
+        setPayerPreset(INITIAL_PRESET);
+        setPayerName(firstPreset.name);
+        setPayerCpf(firstPreset.cpf);
         setProviderName("");
         setProviderCpf("");
         setProviderPhone("");
-        setServiceDesc("");
+        setServiceDesc(DEFAULT_SERVICE_DESCRIPTION);
         setAmount("");
         setServiceDate(todayISODate());
         router.refresh();
@@ -98,23 +132,55 @@ export function ContractorForm() {
         </p>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
+            <label
+              className="block text-sm font-medium text-ink"
+              htmlFor="payerPreset"
+            >
+              Selecionar contratante
+            </label>
+            <select
+              id="payerPreset"
+              name="payerPreset"
+              value={payerPreset}
+              onChange={(e) =>
+                applyPayerPreset(e.target.value as PayerPresetId)
+              }
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-base text-ink outline-none ring-accent/30 focus:border-accent focus:ring-2"
+            >
+              {PAYER_PRESETS.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+              <option value="custom">Outro (preencher nome e CPF abaixo)</option>
+            </select>
+          </div>
+          <div className="sm:col-span-2">
             <label className="block text-sm font-medium text-ink" htmlFor="payer">
-              Seu nome
+              Nome do contratante
             </label>
             <input
               id="payer"
               name="payerName"
               required
               value={payerName}
-              onChange={(e) => setPayerName(e.target.value)}
+              onChange={(e) => {
+                const v = e.target.value;
+                setPayerName(v);
+                markCustomIfEdited(v, payerCpf);
+              }}
               className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-base text-ink outline-none ring-accent/30 placeholder:text-slate-400 focus:border-accent focus:ring-2"
-              placeholder="Ex.: Maria Silva"
+              placeholder="Nome completo"
               autoComplete="name"
             />
+            <p className="mt-1 text-xs text-ink-muted">
+              Ao escolher na lista, nome e CPF são preenchidos; você pode editar
+              livremente.
+            </p>
           </div>
           <div className="sm:col-span-2">
             <label className="block text-sm font-medium text-ink" htmlFor="payerCpf">
-              Seu CPF
+              CPF do contratante
             </label>
             <input
               id="payerCpf"
@@ -123,7 +189,11 @@ export function ContractorForm() {
               inputMode="numeric"
               autoComplete="off"
               value={payerCpf}
-              onChange={(e) => setPayerCpf(e.target.value)}
+              onChange={(e) => {
+                const v = e.target.value;
+                setPayerCpf(v);
+                markCustomIfEdited(payerName, v);
+              }}
               className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-base text-ink outline-none ring-accent/30 placeholder:text-slate-400 focus:border-accent focus:ring-2"
               placeholder="000.000.000-00"
               maxLength={14}
@@ -204,12 +274,15 @@ export function ContractorForm() {
             id="desc"
             name="serviceDesc"
             required
-            rows={3}
+            rows={4}
             value={serviceDesc}
             onChange={(e) => setServiceDesc(e.target.value)}
             className="mt-1 w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-base text-ink outline-none ring-accent/30 placeholder:text-slate-400 focus:border-accent focus:ring-2"
-            placeholder="Ex.: transporte de cargas — rota X"
+            placeholder={DEFAULT_SERVICE_DESCRIPTION}
           />
+          <p className="mt-1 text-xs text-ink-muted">
+            Texto padrão já vem preenchido; altere se precisar.
+          </p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
