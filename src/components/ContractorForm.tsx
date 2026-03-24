@@ -24,8 +24,8 @@ const firstPreset = getPayerPreset(INITIAL_PRESET)!;
 export function ContractorForm() {
   const router = useRouter();
   const [payerPreset, setPayerPreset] = useState<PayerPresetId>(INITIAL_PRESET);
-  const [payerName, setPayerName] = useState(firstPreset.name);
-  const [payerCpf, setPayerCpf] = useState(firstPreset.cpf);
+  const [payerName, setPayerName] = useState<string>(firstPreset.name);
+  const [payerCpf, setPayerCpf] = useState<string>(firstPreset.cpf);
   const [payerWhatsapp, setPayerWhatsapp] = useState(() =>
     firstPreset.whatsappDigits
       ? formatPhoneBr(firstPreset.whatsappDigits)
