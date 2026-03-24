@@ -1,4 +1,5 @@
 import { ContractorForm } from "@/components/ContractorForm";
+import { DatabaseConnectionError } from "@/components/DatabaseConnectionError";
 import { ReceiptsList } from "@/components/ReceiptsList";
 import { prisma } from "@/lib/prisma";
 import type { SerializedReceipt } from "@/types/receipt";
@@ -10,7 +11,7 @@ async function getReceipts(): Promise<SerializedReceipt[]> {
     orderBy: { serviceDate: "desc" },
     take: 30,
   });
-  return rows.map((r) => ({
+  return rows.map((r: (typeof rows)[number]) => ({
     id: r.id,
     payerName: r.payerName,
     payerCpf: r.payerCpf,
@@ -26,7 +27,14 @@ async function getReceipts(): Promise<SerializedReceipt[]> {
 }
 
 export default async function HomePage() {
-  const receipts = await getReceipts();
+  let receipts: SerializedReceipt[] = [];
+  let dbFailed = false;
+  try {
+    receipts = await getReceipts();
+  } catch (e) {
+    console.error("[home] Falha ao carregar recibos:", e);
+    dbFailed = true;
+  }
 
   return (
     <div className="min-h-dvh safe-pb">
@@ -42,8 +50,14 @@ export default async function HomePage() {
       </header>
 
       <main className="mx-auto max-w-2xl space-y-8 px-4 py-8 sm:px-6">
-        <ContractorForm />
-        <ReceiptsList receipts={receipts} />
+        {dbFailed ? (
+          <DatabaseConnectionError />
+        ) : (
+          <>
+            <ContractorForm />
+            <ReceiptsList receipts={receipts} />
+          </>
+        )}
       </main>
     </div>
   );

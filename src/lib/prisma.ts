@@ -1,14 +1,18 @@
 import { PrismaClient } from "@prisma/client";
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
+function createPrisma() {
+  return new PrismaClient({
     log:
       process.env.NODE_ENV === "development"
         ? ["query", "error", "warn"]
         : ["error"],
   });
+}
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+/** Reutiliza o cliente no mesmo isolate (importante em Vercel/serverless). */
+export const prisma = globalForPrisma.prisma ?? createPrisma();
+globalForPrisma.prisma = prisma;
