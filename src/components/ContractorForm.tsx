@@ -6,6 +6,7 @@ import {
   PAYER_PRESETS,
   getPayerPreset,
 } from "@/lib/payer-presets";
+import { formatPhoneBr } from "@/lib/receipt-text";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
@@ -25,6 +26,11 @@ export function ContractorForm() {
   const [payerPreset, setPayerPreset] = useState<PayerPresetId>(INITIAL_PRESET);
   const [payerName, setPayerName] = useState(firstPreset.name);
   const [payerCpf, setPayerCpf] = useState(firstPreset.cpf);
+  const [payerWhatsapp, setPayerWhatsapp] = useState(() =>
+    firstPreset.whatsappDigits
+      ? formatPhoneBr(firstPreset.whatsappDigits)
+      : "",
+  );
   const [providerName, setProviderName] = useState("");
   const [providerCpf, setProviderCpf] = useState("");
   const [providerPhone, setProviderPhone] = useState("");
@@ -57,9 +63,13 @@ export function ContractorForm() {
     if (preset) {
       setPayerName(preset.name);
       setPayerCpf(preset.cpf);
+      setPayerWhatsapp(
+        preset.whatsappDigits ? formatPhoneBr(preset.whatsappDigits) : "",
+      );
     } else {
       setPayerName("");
       setPayerCpf("");
+      setPayerWhatsapp("");
     }
   }
 
@@ -86,6 +96,7 @@ export function ContractorForm() {
         body: JSON.stringify({
           payerName,
           payerCpf,
+          payerWhatsapp,
           providerName,
           providerCpf,
           providerPhone,
@@ -104,6 +115,11 @@ export function ContractorForm() {
         setPayerPreset(INITIAL_PRESET);
         setPayerName(firstPreset.name);
         setPayerCpf(firstPreset.cpf);
+        setPayerWhatsapp(
+          firstPreset.whatsappDigits
+            ? formatPhoneBr(firstPreset.whatsappDigits)
+            : "",
+        );
         setProviderName("");
         setProviderCpf("");
         setProviderPhone("");
@@ -198,6 +214,30 @@ export function ContractorForm() {
               placeholder="000.000.000-00"
               maxLength={14}
             />
+          </div>
+          <div className="sm:col-span-2">
+            <label
+              className="block text-sm font-medium text-ink"
+              htmlFor="payerWhatsapp"
+            >
+              Seu WhatsApp (contratante)
+            </label>
+            <input
+              id="payerWhatsapp"
+              name="payerWhatsapp"
+              required
+              inputMode="tel"
+              autoComplete="tel"
+              value={payerWhatsapp}
+              onChange={(e) => setPayerWhatsapp(e.target.value)}
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-base text-ink outline-none ring-accent/30 placeholder:text-slate-400 focus:border-accent focus:ring-2"
+              placeholder="(99) 99999-9999"
+              maxLength={16}
+            />
+            <p className="mt-1 text-xs text-ink-muted">
+              Após o motorista assinar, abriremos o WhatsApp para ele enviar o
+              PDF a você. Use DDD + número.
+            </p>
           </div>
         </div>
 

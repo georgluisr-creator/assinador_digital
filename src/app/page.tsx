@@ -15,6 +15,7 @@ async function getReceipts(): Promise<SerializedReceipt[]> {
     id: r.id,
     payerName: r.payerName,
     payerCpf: r.payerCpf,
+    payerWhatsapp: r.payerWhatsapp,
     providerName: r.providerName,
     providerCpf: r.providerCpf,
     providerPhone: r.providerPhone,

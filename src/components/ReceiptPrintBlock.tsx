@@ -1,3 +1,5 @@
+"use client";
+
 import { formatServiceDate } from "@/lib/receipt-text";
 import type { SerializedReceipt } from "@/types/receipt";
 import { ReceiptParagraph } from "./ReceiptParagraph";

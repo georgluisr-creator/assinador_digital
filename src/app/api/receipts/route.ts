@@ -14,6 +14,7 @@ export async function GET() {
         id: r.id,
         payerName: r.payerName,
         payerCpf: r.payerCpf,
+        payerWhatsapp: r.payerWhatsapp,
         providerName: r.providerName,
         providerCpf: r.providerCpf,
         providerPhone: r.providerPhone,
@@ -45,11 +46,13 @@ export async function POST(request: Request) {
       serviceDesc,
       amount,
       serviceDate,
+      payerWhatsapp,
     } = body as Record<string, unknown>;
 
     if (
       typeof payerName !== "string" ||
       typeof payerCpf !== "string" ||
+      typeof payerWhatsapp !== "string" ||
       typeof providerName !== "string" ||
       typeof providerCpf !== "string" ||
       typeof providerPhone !== "string" ||
@@ -70,6 +73,7 @@ export async function POST(request: Request) {
     };
 
     const payerCpfDigits = digitsOnly(payerCpf);
+    const payerWhatsappDigits = digitsOnly(payerWhatsapp);
     const providerCpfDigits = digitsOnly(providerCpf);
     const providerPhoneDigits = digitsOnly(providerPhone);
 
@@ -87,6 +91,15 @@ export async function POST(request: Request) {
     if (payerCpfDigits.length !== 11) {
       return NextResponse.json(
         { error: "CPF do contratante deve ter 11 dígitos." },
+        { status: 400 },
+      );
+    }
+    if (payerWhatsappDigits.length < 10 || payerWhatsappDigits.length > 11) {
+      return NextResponse.json(
+        {
+          error:
+            "WhatsApp do contratante: informe DDD + número (10 ou 11 dígitos).",
+        },
         { status: 400 },
       );
     }
@@ -120,6 +133,7 @@ export async function POST(request: Request) {
       data: {
         payerName: trimmed.payerName,
         payerCpf: payerCpfDigits,
+        payerWhatsapp: payerWhatsappDigits,
         providerName: trimmed.providerName,
         providerCpf: providerCpfDigits,
         providerPhone: providerPhoneDigits,

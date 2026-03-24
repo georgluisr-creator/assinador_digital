@@ -22,6 +22,7 @@ export async function GET(
       id: receipt.id,
       payerName: receipt.payerName,
       payerCpf: receipt.payerCpf,
+      payerWhatsapp: receipt.payerWhatsapp,
       providerName: receipt.providerName,
       providerCpf: receipt.providerCpf,
       providerPhone: receipt.providerPhone,

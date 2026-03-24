@@ -8,11 +8,14 @@ export const PAYER_PRESETS = [
     id: "luiz" as const,
     name: "Luiz Bernardino de Deus",
     cpf: "393.298.106-59",
+    /** DDD+número, só dígitos; preencha para preencher o WhatsApp ao escolher o preset. */
+    whatsappDigits: "",
   },
   {
     id: "george" as const,
     name: "George Luis Rodrigues de Deus",
     cpf: "045.672.993-37",
+    whatsappDigits: "",
   },
 ] as const;
 

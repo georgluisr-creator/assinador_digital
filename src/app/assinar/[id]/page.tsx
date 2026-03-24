@@ -43,6 +43,7 @@ export default async function AssinarPage({ params }: PageProps) {
     id: row.id,
     payerName: row.payerName,
     payerCpf: row.payerCpf,
+    payerWhatsapp: row.payerWhatsapp,
     providerName: row.providerName,
     providerCpf: row.providerCpf,
     providerPhone: row.providerPhone,
