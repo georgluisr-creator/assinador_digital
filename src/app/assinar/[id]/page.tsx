@@ -47,6 +47,7 @@ export default async function AssinarPage({ params }: PageProps) {
     providerName: row.providerName,
     providerCpf: row.providerCpf,
     providerPhone: row.providerPhone,
+    providerAddress: row.providerAddress,
     serviceDesc: row.serviceDesc,
     amount: row.amount.toString(),
     serviceDate: row.serviceDate.toISOString(),

@@ -15,6 +15,7 @@ model Receipt {
   providerName      String   @map("provider_name")
   providerCpf       String   @map("provider_cpf")
   providerPhone     String   @map("provider_phone")
+  providerAddress   String?  @map("provider_address") @db.Text
   serviceDesc       String   @map("service_desc")
   amount            Decimal  @db.Decimal(12, 2)
   serviceDate       DateTime @map("service_date") @db.Date

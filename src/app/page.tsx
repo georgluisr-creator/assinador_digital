@@ -19,6 +19,7 @@ async function getReceipts(): Promise<SerializedReceipt[]> {
     providerName: r.providerName,
     providerCpf: r.providerCpf,
     providerPhone: r.providerPhone,
+    providerAddress: r.providerAddress,
     serviceDesc: r.serviceDesc,
     amount: r.amount.toString(),
     serviceDate: r.serviceDate.toISOString(),

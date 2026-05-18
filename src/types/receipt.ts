@@ -7,6 +7,7 @@ export type SerializedReceipt = {
   providerName: string;
   providerCpf: string;
   providerPhone: string;
+  providerAddress: string | null;
   serviceDesc: string;
   amount: string;
   serviceDate: string;

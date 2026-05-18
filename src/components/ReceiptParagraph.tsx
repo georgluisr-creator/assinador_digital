@@ -23,10 +23,16 @@ export function ReceiptParagraph({ receipt, className }: Props) {
   return (
     <p className={className ?? "text-base leading-relaxed text-ink"}>
       Eu, <strong>{receipt.providerName}</strong>, inscrito(a) no CPF{" "}
-      <strong>{cpfProvider}</strong>, telefone {phone}, declaro que recebi de{" "}
-      <strong>{receipt.payerName}</strong>, CPF <strong>{cpfPayer}</strong>, a
-      quantia de <strong>{amountFormatted}</strong>, referente a{" "}
-      {receipt.serviceDesc} no dia {formatServiceDate(dateObj)}.
+      <strong>{cpfProvider}</strong>, telefone {phone},
+      {receipt.providerAddress ? (
+        <>
+          {" "}residente em <strong>{receipt.providerAddress}</strong>,
+        </>
+      ) : null}{" "}
+      declaro que recebi de <strong>{receipt.payerName}</strong>, CPF{" "}
+      <strong>{cpfPayer}</strong>, a quantia de{" "}
+      <strong>{amountFormatted}</strong>, referente a {receipt.serviceDesc} no
+      dia {formatServiceDate(dateObj)}.
     </p>
   );
 }

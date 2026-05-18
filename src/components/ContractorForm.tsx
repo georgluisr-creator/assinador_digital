@@ -34,6 +34,7 @@ export function ContractorForm() {
   const [providerName, setProviderName] = useState("");
   const [providerCpf, setProviderCpf] = useState("");
   const [providerPhone, setProviderPhone] = useState("");
+  const [providerAddress, setProviderAddress] = useState("");
   const [serviceDesc, setServiceDesc] = useState(DEFAULT_SERVICE_DESCRIPTION);
   const [amount, setAmount] = useState("");
   const [serviceDate, setServiceDate] = useState(todayISODate);
@@ -100,6 +101,7 @@ export function ContractorForm() {
           providerName,
           providerCpf,
           providerPhone,
+          providerAddress: providerAddress.trim() || undefined,
           serviceDesc,
           amount,
           serviceDate,
@@ -123,6 +125,7 @@ export function ContractorForm() {
         setProviderName("");
         setProviderCpf("");
         setProviderPhone("");
+        setProviderAddress("");
         setServiceDesc(DEFAULT_SERVICE_DESCRIPTION);
         setAmount("");
         setServiceDate(todayISODate());
@@ -303,6 +306,23 @@ export function ContractorForm() {
                 maxLength={16}
               />
             </div>
+          </div>
+          <div>
+            <label
+              className="block text-sm font-medium text-ink"
+              htmlFor="providerAddress"
+            >
+              Endereço do prestador (opcional)
+            </label>
+            <input
+              id="providerAddress"
+              name="providerAddress"
+              value={providerAddress}
+              onChange={(e) => setProviderAddress(e.target.value)}
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-base text-ink outline-none ring-accent/30 placeholder:text-slate-400 focus:border-accent focus:ring-2"
+              placeholder="Ex.: Av. Paulista, 1000 - São Paulo - SP"
+              autoComplete="off"
+            />
           </div>
         </div>
 

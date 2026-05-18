@@ -26,6 +26,7 @@ export async function GET(
       providerName: receipt.providerName,
       providerCpf: receipt.providerCpf,
       providerPhone: receipt.providerPhone,
+      providerAddress: receipt.providerAddress,
       serviceDesc: receipt.serviceDesc,
       amount: receipt.amount.toString(),
       serviceDate: receipt.serviceDate.toISOString(),

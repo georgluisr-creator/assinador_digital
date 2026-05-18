@@ -18,6 +18,7 @@ export async function GET() {
         providerName: r.providerName,
         providerCpf: r.providerCpf,
         providerPhone: r.providerPhone,
+        providerAddress: r.providerAddress,
         serviceDesc: r.serviceDesc,
         amount: r.amount.toString(),
         serviceDate: r.serviceDate.toISOString(),
@@ -43,6 +44,7 @@ export async function POST(request: Request) {
       providerName,
       providerCpf,
       providerPhone,
+      providerAddress,
       serviceDesc,
       amount,
       serviceDate,
@@ -56,6 +58,7 @@ export async function POST(request: Request) {
       typeof providerName !== "string" ||
       typeof providerCpf !== "string" ||
       typeof providerPhone !== "string" ||
+      (providerAddress !== undefined && typeof providerAddress !== "string") ||
       typeof serviceDesc !== "string" ||
       typeof amount === "undefined" ||
       typeof serviceDate !== "string"
@@ -70,6 +73,7 @@ export async function POST(request: Request) {
       payerName: payerName.trim(),
       providerName: providerName.trim(),
       serviceDesc: serviceDesc.trim(),
+      providerAddress: typeof providerAddress === "string" ? providerAddress.trim() : null,
     };
 
     const payerCpfDigits = digitsOnly(payerCpf);
@@ -137,6 +141,7 @@ export async function POST(request: Request) {
         providerName: trimmed.providerName,
         providerCpf: providerCpfDigits,
         providerPhone: providerPhoneDigits,
+        providerAddress: trimmed.providerAddress,
         serviceDesc: trimmed.serviceDesc,
         amount: parsedAmount,
         serviceDate: date,
